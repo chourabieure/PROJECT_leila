@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { Poppins } from 'next/font/google'
+import { Dock } from '@/components/Dock'
 
 const poppins = Poppins({
   variable: '--font-poppins',
@@ -19,7 +20,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" className="w-lvw overflow-hidden box-border fixed inset-0 ">
-      <body className={`${poppins.className} antialiased font-poppins h-full w-full bg-zinc-900`}>{children}</body>
+      <body className={`${poppins.className} antialiased font-poppins h-full w-full bg-zinc-900`}>
+        <main className="h-full w-full p-6 gap-6 flex flex-col items-center justify-center font-nunito">
+          {children}
+          <Dock />
+        </main>
+      </body>
     </html>
   )
 }
