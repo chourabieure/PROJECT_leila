@@ -1,0 +1,680 @@
+/*
+  Pokemon Card Effects CSS
+  Ported from pokemon-cards-css-main Svelte project
+*/
+
+/* ===========================================
+   CSS Variables
+   =========================================== */
+
+.card {
+  --pointer-x: 50%;
+  --pointer-y: 50%;
+  --card-scale: 1;
+  --card-opacity: 0;
+  --translate-x: 0px;
+  --translate-y: 0px;
+  --rotate-x: 0deg;
+  --rotate-y: 0deg;
+  --background-x: 50%;
+  --background-y: 50%;
+  --pointer-from-center: 0;
+  --pointer-from-top: 0.5;
+  --pointer-from-left: 0.5;
+
+  --card-aspect: 0.718;
+  --card-radius: 20px;
+  --card-edge: hsl(47, 100%, 78%);
+  --card-back: hsl(205, 100%, 25%);
+  --card-glow: hsl(175, 100%, 90%);
+
+  /* Holo colors */
+  --red: #f80e35;
+  --yellow: #eedf10;
+  --green: #21e985;
+  --blue: #0dbde9;
+  --violet: #c929f1;
+
+  /* Sunpillar colors */
+  --sunpillar-1: hsl(2, 100%, 73%);
+  --sunpillar-2: hsl(53, 100%, 69%);
+  --sunpillar-3: hsl(93, 100%, 69%);
+  --sunpillar-4: hsl(176, 100%, 76%);
+  --sunpillar-5: hsl(228, 100%, 74%);
+  --sunpillar-6: hsl(283, 100%, 73%);
+
+  /* Texture URLs - update these paths as needed */
+  --grain: url('/pokemon-effects/grain.webp');
+  --glitter: url('/pokemon-effects/glitter.png');
+  --glittersize: 25%;
+
+  --space: 5%;
+  --angle: 133deg;
+  --imgsize: cover;
+}
+
+/* Type-based glow colors */
+.card.water {
+  --card-glow: hsl(192, 97%, 60%);
+}
+.card.fire {
+  --card-glow: hsl(9, 81%, 59%);
+}
+.card.grass {
+  --card-glow: hsl(96, 81%, 65%);
+}
+.card.lightning {
+  --card-glow: hsl(54, 87%, 63%);
+}
+.card.electric {
+  --card-glow: hsl(54, 87%, 63%);
+}
+.card.psychic {
+  --card-glow: hsl(281, 62%, 58%);
+}
+.card.fighting {
+  --card-glow: rgb(145, 90, 39);
+}
+.card.darkness {
+  --card-glow: hsl(189, 77%, 27%);
+}
+.card.dark {
+  --card-glow: hsl(189, 77%, 27%);
+}
+.card.metal {
+  --card-glow: hsl(184, 20%, 70%);
+}
+.card.steel {
+  --card-glow: hsl(184, 20%, 70%);
+}
+.card.dragon {
+  --card-glow: hsl(51, 60%, 35%);
+}
+.card.fairy {
+  --card-glow: hsl(323, 100%, 89%);
+}
+.card.colorless {
+  --card-glow: hsl(0, 0%, 70%);
+}
+
+/* ===========================================
+   Base Card Styles
+   =========================================== */
+
+.card {
+  transform: translate3d(0px, 0px, 0.01px);
+  pointer-events: none;
+  z-index: calc(var(--card-scale) * 2);
+  will-change: transform, visibility, z-index;
+  transform-style: preserve-3d;
+}
+
+.card,
+.card * {
+  outline: 1px solid transparent;
+}
+
+.card,
+.card__rotator {
+  aspect-ratio: var(--card-aspect);
+  border-radius: var(--card-radius);
+}
+
+.card.interacting {
+  z-index: calc(var(--card-scale) * 120);
+}
+
+.card.active .card__translater,
+.card.active .card__rotator {
+  touch-action: none;
+}
+
+/* ===========================================
+   Translater & Rotator
+   =========================================== */
+
+.card__translater,
+.card__rotator {
+  display: grid;
+  perspective: 600px;
+  will-change: transform, box-shadow;
+  transform-origin: center;
+  transform-style: preserve-3d;
+}
+
+.card__translater {
+  width: auto;
+  position: relative;
+  transform: translate3d(var(--translate-x), var(--translate-y), 0.1px) scale(var(--card-scale));
+}
+
+.card__rotator {
+  transform: rotateY(var(--rotate-x)) rotateX(var(--rotate-y));
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* Interactive transitions */
+.card.interactive .card__translater,
+.card.interactive .card__rotator {
+  transition:
+    transform 0.5s ease-out,
+    box-shadow 0.4s ease;
+}
+
+.card.interactive.interacting .card__translater,
+.card.interactive.interacting .card__rotator {
+  transition: none;
+}
+
+.card.interactive .card__shine,
+.card.interactive .card__glare {
+  transition:
+    opacity 0.5s ease-out,
+    background-position 0.5s ease-out;
+}
+
+.card.interactive.interacting .card__shine,
+.card.interactive.interacting .card__glare {
+  transition: none;
+}
+
+/* Box shadow states */
+.card__rotator,
+.card.active .card__rotator:focus {
+  box-shadow:
+    0 0 3px -1px transparent,
+    0 0 2px 1px transparent,
+    0 0 5px 0px transparent,
+    0px 10px 20px -5px black,
+    0 2px 15px -5px black,
+    0 0 20px 0px transparent;
+}
+
+.card.active .card__rotator,
+.card__rotator:focus,
+.card.interacting .card__rotator {
+  box-shadow:
+    0 0 3px -1px white,
+    0 0 3px 1px var(--card-edge),
+    0 0 12px 2px var(--card-glow),
+    0px 10px 20px -5px black,
+    0 0 40px -30px var(--card-glow),
+    0 0 50px -20px var(--card-glow);
+}
+
+/* ===========================================
+   Card Content Layers
+   =========================================== */
+
+.card__rotator > * {
+  width: 100%;
+  display: grid;
+  grid-area: 1/1;
+  aspect-ratio: var(--card-aspect);
+  border-radius: var(--card-radius);
+  image-rendering: optimizeQuality;
+  transform-style: preserve-3d;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.card__rotator img {
+  height: auto;
+  width: 100%;
+  object-fit: cover;
+}
+
+.card__rotator img:not(.card__back) {
+  transform: translate3d(0px, 0px, 0.01px);
+}
+
+/* Card back */
+.card__back {
+  background-color: var(--card-back);
+  transform: rotateY(180deg) translateZ(1px);
+  backface-visibility: visible;
+}
+
+/* Card front */
+.card__front,
+.card__front * {
+  backface-visibility: hidden;
+}
+
+.card__front {
+  opacity: 1;
+  transition: opacity 0.33s ease-out;
+  transform: translate3d(0px, 0px, 0.01px);
+}
+
+.card.loading .card__front {
+  opacity: 0;
+}
+
+.card.loading .card__back {
+  transform: rotateY(0deg);
+}
+
+/* Card content (for custom children) */
+.card__content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  grid-area: 1/1;
+  border-radius: var(--card-radius);
+  overflow: hidden;
+}
+
+/* When card has children, let it size to content */
+.card--has-children {
+  width: fit-content;
+  height: fit-content;
+}
+
+.card--has-children,
+.card--has-children .card__rotator {
+  aspect-ratio: unset;
+}
+
+.card--has-children .card__rotator > * {
+  aspect-ratio: unset;
+}
+
+.card--has-children .card__content > * {
+  border-radius: var(--card-radius);
+}
+
+/* ===========================================
+   Shine & Glare Effects
+   =========================================== */
+
+.card__shine,
+.card__glare {
+  will-change:
+    transform, opacity, background-image, background-size, background-position, background-blend-mode, filter;
+}
+
+.card__shine {
+  display: grid;
+  transform: translateZ(1px);
+  overflow: hidden;
+  z-index: 3;
+  background: transparent;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.85) contrast(2.75) saturate(0.65);
+  mix-blend-mode: color-dodge;
+  opacity: var(--card-opacity);
+}
+
+.card__shine:before,
+.card__shine:after {
+  content: '';
+  grid-area: 1/1;
+  transform: translateZ(1px);
+  border-radius: var(--card-radius);
+}
+
+.card__shine:after {
+  transform: translateZ(1.2px);
+}
+
+.card__glare {
+  transform: translateZ(1.41px);
+  overflow: hidden;
+  background-image: radial-gradient(
+    farthest-corner circle at var(--pointer-x) var(--pointer-y),
+    hsla(0, 0%, 100%, 0.8) 10%,
+    hsla(0, 0%, 100%, 0.65) 20%,
+    hsla(0, 0%, 0%, 0.5) 90%
+  );
+  opacity: var(--card-opacity);
+  mix-blend-mode: overlay;
+}
+
+/* ===========================================
+   Rare Holo Effect
+   =========================================== */
+
+.card[data-rarity='rare holo'] .card__shine {
+  background-image: repeating-linear-gradient(
+    110deg,
+    var(--violet),
+    var(--blue),
+    var(--green),
+    var(--yellow),
+    var(--red),
+    var(--violet),
+    var(--blue),
+    var(--green),
+    var(--yellow),
+    var(--red),
+    var(--violet),
+    var(--blue),
+    var(--green),
+    var(--yellow),
+    var(--red)
+  );
+  background-position: calc(((50% - var(--background-x)) * 2.6) + 50%) calc(((50% - var(--background-y)) * 3.5) + 50%);
+  background-size: 400% 400%;
+  background-blend-mode: overlay;
+  filter: brightness(1.1) contrast(1.1) saturate(1.2);
+  mix-blend-mode: color-dodge;
+}
+
+.card[data-rarity='rare holo'] .card__shine:before {
+  background-image:
+    repeating-linear-gradient(90deg, transparent 0%, hsla(0, 0%, 100%, 0.15) 2%, transparent 4%, transparent 8%),
+    repeating-linear-gradient(90deg, transparent 0%, hsla(0, 0%, 100%, 0.1) 3%, transparent 6%, transparent 12%);
+  background-position:
+    calc((((50% - var(--background-x)) * 1.65) + 50%) + (var(--background-y) * 0.5)) var(--background-x),
+    calc((((50% - var(--background-x)) * -0.9) + 50%) - (var(--background-y) * 0.75)) var(--background-y);
+  background-size:
+    200% 200%,
+    200% 200%;
+  background-blend-mode: screen;
+  filter: brightness(1.15) contrast(1.1);
+  mix-blend-mode: hard-light;
+}
+
+.card[data-rarity='rare holo'] .card__shine:after {
+  background-image: radial-gradient(
+    farthest-corner circle at var(--pointer-x) var(--pointer-y),
+    hsla(0, 0%, 90%, 0.8) 0%,
+    hsla(0, 0%, 78%, 0.1) 25%,
+    hsl(0, 0%, 0%) 90%
+  );
+  background-position: center center;
+  background-size: cover;
+  mix-blend-mode: luminosity;
+  filter: brightness(0.6) contrast(4);
+}
+
+.card[data-rarity='rare holo'] .card__glare {
+  opacity: calc(var(--card-opacity) * 0.8);
+  filter: brightness(0.8) contrast(1.5);
+  mix-blend-mode: overlay;
+}
+
+.card[data-rarity='rare holo'] .card__glare:after {
+  content: '';
+  grid-area: 1/1;
+  border-radius: var(--card-radius);
+  background-image: radial-gradient(
+    farthest-corner circle at var(--pointer-x) var(--pointer-y),
+    hsl(180, 100%, 95%) 5%,
+    hsla(0, 0%, 39%, 0.25) 55%,
+    hsla(0, 0%, 0%, 0.36) 110%
+  );
+  mix-blend-mode: overlay;
+  filter: brightness(0.6) contrast(3);
+}
+
+/* ===========================================
+   Rare Holo Cosmos Effect
+   =========================================== */
+
+.card[data-rarity='rare holo cosmos'] .card__shine {
+  --space: 4%;
+  background-image:
+    url('/pokemon-effects/cosmos-bottom.png'),
+    repeating-linear-gradient(
+      82deg,
+      hsl(53, 65%, 60%) calc(var(--space) * 1),
+      hsl(93, 56%, 50%) calc(var(--space) * 2),
+      hsl(176, 54%, 49%) calc(var(--space) * 3),
+      hsl(228, 59%, 55%) calc(var(--space) * 4),
+      hsl(283, 60%, 55%) calc(var(--space) * 5),
+      hsl(326, 59%, 51%) calc(var(--space) * 6),
+      hsl(326, 59%, 51%) calc(var(--space) * 7),
+      hsl(283, 60%, 55%) calc(var(--space) * 8),
+      hsl(228, 59%, 55%) calc(var(--space) * 9),
+      hsl(176, 54%, 49%) calc(var(--space) * 10),
+      hsl(93, 56%, 50%) calc(var(--space) * 11),
+      hsl(53, 65%, 60%) calc(var(--space) * 12)
+    ),
+    radial-gradient(
+      farthest-corner circle at var(--pointer-x) var(--pointer-y),
+      hsla(180, 100%, 89%, 0.5) 5%,
+      hsla(180, 14%, 57%, 0.3) 40%,
+      hsl(0, 0%, 0%) 130%
+    );
+  background-blend-mode: color-burn, multiply;
+  background-position:
+    var(--cosmosbg, center center),
+    calc(10% + (var(--pointer-from-left) * 80%)) calc(10% + (var(--pointer-from-top) * 80%)),
+    center center;
+  background-size:
+    cover,
+    400% 900%,
+    cover;
+  filter: brightness(1) contrast(1) saturate(0.8);
+  mix-blend-mode: color-dodge;
+}
+
+.card[data-rarity='rare holo cosmos'] .card__shine:before {
+  background-image:
+    url('/pokemon-effects/cosmos-middle-trans.png'),
+    repeating-linear-gradient(
+      82deg,
+      hsl(53, 65%, 60%) calc(var(--space) * 1),
+      hsl(93, 56%, 50%) calc(var(--space) * 2),
+      hsl(176, 54%, 49%) calc(var(--space) * 3),
+      hsl(228, 59%, 55%) calc(var(--space) * 4),
+      hsl(283, 60%, 55%) calc(var(--space) * 5),
+      hsl(326, 59%, 51%) calc(var(--space) * 6),
+      hsl(326, 59%, 51%) calc(var(--space) * 7),
+      hsl(283, 60%, 55%) calc(var(--space) * 8),
+      hsl(228, 59%, 55%) calc(var(--space) * 9),
+      hsl(176, 54%, 49%) calc(var(--space) * 10),
+      hsl(93, 56%, 50%) calc(var(--space) * 11),
+      hsl(53, 65%, 60%) calc(var(--space) * 12)
+    );
+  background-blend-mode: lighten, multiply;
+  background-position:
+    var(--cosmosbg, center center),
+    calc(15% + (var(--pointer-from-left) * 70%)) calc(15% + (var(--pointer-from-top) * 70%)),
+    center center;
+  background-size:
+    cover,
+    400% 900%,
+    cover;
+  filter: brightness(1.25) contrast(1.75) saturate(0.8);
+  mix-blend-mode: overlay;
+  z-index: 2;
+}
+
+.card[data-rarity='rare holo cosmos'] .card__shine:after {
+  background-image:
+    url('/pokemon-effects/cosmos-top-trans.png'),
+    repeating-linear-gradient(
+      82deg,
+      hsl(53, 65%, 60%) calc(var(--space) * 1),
+      hsl(93, 56%, 50%) calc(var(--space) * 2),
+      hsl(176, 54%, 49%) calc(var(--space) * 3),
+      hsl(228, 59%, 55%) calc(var(--space) * 4),
+      hsl(283, 60%, 55%) calc(var(--space) * 5),
+      hsl(326, 59%, 51%) calc(var(--space) * 6),
+      hsl(326, 59%, 51%) calc(var(--space) * 7),
+      hsl(283, 60%, 55%) calc(var(--space) * 8),
+      hsl(228, 59%, 55%) calc(var(--space) * 9),
+      hsl(176, 54%, 49%) calc(var(--space) * 10),
+      hsl(93, 56%, 50%) calc(var(--space) * 11),
+      hsl(53, 65%, 60%) calc(var(--space) * 12)
+    );
+  background-blend-mode: multiply, multiply;
+  background-position:
+    var(--cosmosbg, center center),
+    calc(20% + (var(--pointer-from-left) * 60%)) calc(20% + (var(--pointer-from-top) * 60%)),
+    center center;
+  background-size:
+    cover,
+    400% 900%,
+    cover;
+  filter: brightness(1.25) contrast(1.75) saturate(0.8);
+  mix-blend-mode: multiply;
+  z-index: 3;
+}
+
+.card[data-rarity='rare holo cosmos'] .card__glare {
+  background-image: radial-gradient(
+    farthest-corner circle at var(--pointer-x) var(--pointer-y),
+    hsla(204, 100%, 95%, 0.8) 5%,
+    hsla(250, 15%, 20%, 1) 150%
+  );
+  filter: brightness(0.75) contrast(2) saturate(2);
+  mix-blend-mode: overlay;
+  opacity: calc(var(--card-opacity) * (0.25 + var(--pointer-from-center)));
+}
+
+.card[data-rarity='rare holo cosmos'] .card__glare:after {
+  content: '';
+  grid-area: 1/1;
+  border-radius: var(--card-radius);
+  background-image: radial-gradient(
+    farthest-corner circle at var(--pointer-x) var(--pointer-y),
+    hsl(280, 100%, 96%) 5%,
+    hsl(0, 0%, 10%) 60%
+  );
+  filter: brightness(0.75) contrast(2.5) saturate(2);
+  mix-blend-mode: soft-light;
+  opacity: calc(1 - var(--pointer-from-top) * 0.75);
+}
+
+/* ===========================================
+   Rare Rainbow Effect
+   =========================================== */
+
+.card[data-rarity='rare rainbow'] .card__shine {
+  --r-clr-1: hsl(0, 57%, 37%);
+  --r-clr-2: hsl(40, 53%, 39%);
+  --r-clr-3: hsl(90, 60%, 35%);
+  --r-clr-4: hsl(180, 60%, 35%);
+  --r-clr-5: hsl(180, 60%, 35%);
+  --r-clr-6: hsl(210, 57%, 39%);
+  --r-clr-7: hsl(280, 55%, 31%);
+
+  background-image:
+    linear-gradient(-45deg, var(--r-clr-1), var(--r-clr-5)), var(--glitter),
+    linear-gradient(
+      -30deg,
+      var(--r-clr-1),
+      var(--r-clr-2),
+      var(--r-clr-3),
+      var(--r-clr-4),
+      var(--r-clr-5),
+      var(--r-clr-6),
+      var(--r-clr-7),
+      var(--r-clr-1),
+      var(--r-clr-2),
+      var(--r-clr-3),
+      var(--r-clr-4),
+      var(--r-clr-5),
+      var(--r-clr-6),
+      var(--r-clr-7),
+      var(--r-clr-1),
+      var(--r-clr-2),
+      var(--r-clr-3),
+      var(--r-clr-4),
+      var(--r-clr-5),
+      var(--r-clr-6),
+      var(--r-clr-7),
+      var(--r-clr-1)
+    );
+  background-blend-mode: luminosity, soft-light;
+  background-size:
+    200% 200%,
+    var(--glittersize) var(--glittersize),
+    400% 400%;
+  background-position:
+    calc(25% + (50% * var(--pointer-from-left))) calc(25% + (50% * var(--pointer-from-top))),
+    center center,
+    calc(25% + (var(--pointer-x) / 2)) calc(25% + (var(--pointer-y) / 2));
+  filter: brightness(calc((var(--pointer-from-center) * 0.25) + 0.6)) contrast(2.2) saturate(0.75);
+}
+
+.card[data-rarity='rare rainbow'] .card__shine:after {
+  mask-image: none !important;
+  background-image:
+    var(--glitter),
+    linear-gradient(
+      -60deg,
+      var(--r-clr-1),
+      var(--r-clr-2),
+      var(--r-clr-3),
+      var(--r-clr-4),
+      var(--r-clr-5),
+      var(--r-clr-6),
+      var(--r-clr-7),
+      var(--r-clr-1),
+      var(--r-clr-2),
+      var(--r-clr-3),
+      var(--r-clr-4),
+      var(--r-clr-5),
+      var(--r-clr-6),
+      var(--r-clr-7),
+      var(--r-clr-1),
+      var(--r-clr-2),
+      var(--r-clr-3),
+      var(--r-clr-4),
+      var(--r-clr-5),
+      var(--r-clr-6),
+      var(--r-clr-7),
+      var(--r-clr-1)
+    );
+  background-blend-mode: soft-light;
+  background-size:
+    var(--glittersize) var(--glittersize),
+    400% 400%;
+  background-position:
+    center center,
+    var(--pointer-x) var(--pointer-y);
+  filter: brightness(calc((var(--pointer-from-center) * 0.3) + 0.55)) contrast(2) saturate(1);
+  mix-blend-mode: color-dodge;
+}
+
+.card[data-rarity='rare rainbow'] .card__shine:before {
+  background-image: var(--foil);
+  background-size: var(--imgsize);
+  background-position: center center;
+  filter: brightness(2.5) contrast(1);
+  opacity: calc((var(--pointer-from-center) + 0.4) * 0.6);
+  background-blend-mode: difference;
+  mix-blend-mode: darken;
+}
+
+.card[data-rarity='rare rainbow'] .card__glare {
+  background-image: radial-gradient(
+    farthest-corner circle at var(--pointer-x) var(--pointer-y),
+    hsl(0, 0%, 80%),
+    hsla(187, 10%, 85%, 0.25) 30%,
+    hsl(197, 6%, 25%) 120%
+  );
+  filter: brightness(0.9) contrast(1.75);
+  opacity: calc(var(--pointer-from-center) * 0.9);
+  mix-blend-mode: hard-light;
+}
+
+/* ===========================================
+   Masking Effects
+   =========================================== */
+
+.card.masked .card__shine,
+.card.masked .card__shine:before,
+.card.masked .card__shine:after {
+  mask-image: var(--mask);
+  mask-size: cover;
+  mask-position: center center;
+}
+
+/* ===========================================
+   Common card styles (when not using wrapper for image)
+   =========================================== */
+
+.card[data-rarity='common'] .card__shine,
+.card[data-rarity='common'] .card__glare {
+  display: none;
+}

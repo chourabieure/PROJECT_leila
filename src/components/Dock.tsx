@@ -1,4 +1,4 @@
-import { IconCat, IconChristmasTree, IconHome } from '@tabler/icons-react'
+import { IconChristmasTree, IconGift, IconHome } from '@tabler/icons-react'
 import { FloatingDock } from './ui/floating-dock'
 
 const links = [
@@ -8,11 +8,10 @@ const links = [
     href: '/',
   },
   {
-    title: 'Glitch',
-    icon: <IconCat className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
-    href: '/glitch',
+    title: 'Booster',
+    icon: <IconGift className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
+    href: '/booster',
   },
-
   {
     title: 'Noël',
     icon: <IconChristmasTree className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
@@ -20,5 +19,7 @@ const links = [
   },
 ]
 export const Dock = () => {
-  return <FloatingDock items={links} />
+  return (
+    <FloatingDock items={links} mobileClassName="fixed bottom-6 z-[1000]" desktopClassName="fixed bottom-6 z-[1000]" />
+  )
 }
