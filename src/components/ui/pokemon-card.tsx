@@ -1,21 +1,7 @@
 'use client'
 
+import { RARITY_COLORS, Rarity, EnergyType } from '@/utils/types'
 import Image from 'next/image'
-
-// Types
-type EnergyType =
-  | 'water'
-  | 'fire'
-  | 'grass'
-  | 'electric'
-  | 'psychic'
-  | 'fighting'
-  | 'dark'
-  | 'steel'
-  | 'fairy'
-  | 'dragon'
-  | 'colorless'
-type Rarity = 'common' | 'uncommon' | 'rare' | 'holo' | 'ultra' | 'secret'
 
 interface Attack {
   name: string
@@ -305,7 +291,6 @@ const RaritySymbol = ({ rarity }: { rarity: Rarity }) => {
         </svg>
       )
     case 'ultra':
-    case 'secret':
       return (
         <svg width="12" height="12" viewBox="0 0 24 24">
           <defs>
@@ -366,7 +351,7 @@ export const PokemonCard = ({
   year,
 }: PokemonCardProps) => {
   const typeColor = typeColors[type]
-  const isHolo = rarity === 'holo' || rarity === 'ultra' || rarity === 'secret'
+  const isHolo = rarity === 'holo' || rarity === 'ultra'
 
   return (
     <div
@@ -604,7 +589,13 @@ export const PokemonCard = ({
             </div>
 
             {/* Right side - Flavor Text */}
-            <div className="max-w-[150px] text-right italic text-gray-800 leading-tight">{flavorText}</div>
+
+            <div className="max-w-[150px] text-right italic text-gray-800 leading-tight flex flex-col gap-0.5">
+              <span className="font-bold" style={{ color: RARITY_COLORS[rarity] }}>
+                {rarity.toUpperCase()}
+              </span>
+              <span>{flavorText}</span>
+            </div>
           </div>
         </div>
       </div>

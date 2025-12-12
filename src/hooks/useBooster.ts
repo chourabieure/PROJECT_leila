@@ -53,12 +53,12 @@ export function useBooster(userId: string | undefined): UseBoosterReturn {
   // Open a booster pack
   const openBooster = useCallback(async (): Promise<BoosterCardFull[] | null> => {
     if (!userId) {
-      setError('User not authenticated')
+      setError('Utilisateur non authentifié')
       return null
     }
 
     if (boostersRemaining <= 0) {
-      setError('No boosters remaining today')
+      setError("Plus de boosters disponibles aujourd'hui")
       return null
     }
 
@@ -73,7 +73,7 @@ export function useBooster(userId: string | undefined): UseBoosterReturn {
       if (boosterError) {
         // Check if it's the daily limit error
         if (boosterError.message.includes('Daily booster limit reached')) {
-          setError('You have reached your daily limit of 5 boosters!')
+          setError('Tu as atteint ta limite quotidienne de 5 boosters !')
           setBoostersRemaining(0)
         } else {
           setError(boosterError.message)
@@ -82,17 +82,20 @@ export function useBooster(userId: string | undefined): UseBoosterReturn {
       }
 
       if (!boosterCards || boosterCards.length === 0) {
-        setError('No cards received from booster')
+        setError('Aucune carte reçue du booster')
         return null
       }
 
       // The function returns out_card_id, out_card_name, out_card_rarity, out_card_image_url, out_is_new
-      // Fetch full card details for each card obtained
+      // Fetch full card details with attacks for each card obtained
       const cardIds = boosterCards.map((c: { out_card_id: number }) => c.out_card_id)
-      const { data: fullCards, error: cardsError } = await supabase.from('cards').select('*').in('id', cardIds)
+      const { data: fullCards, error: cardsError } = await supabase
+        .from('cards')
+        .select('*, attacks:attacks(*)')
+        .in('id', cardIds)
 
       if (cardsError) {
-        setError('Error fetching card details')
+        setError('Erreur lors de la récupération des détails des cartes')
         return null
       }
 
@@ -110,7 +113,7 @@ export function useBooster(userId: string | undefined): UseBoosterReturn {
 
       return cardsWithNew
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred'
+      const errorMessage = err instanceof Error ? err.message : "Une erreur inattendue s'est produite"
       setError(errorMessage)
       return null
     } finally {

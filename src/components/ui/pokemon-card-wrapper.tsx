@@ -49,7 +49,7 @@ export function PokemonCardWrapper({
   subtypes = 'basic',
   supertype = 'pokémon',
   img,
-  backImg = '/cardBack.jpg',
+  backImg = '/cardBack.png',
   foil,
   mask,
   showcase = false,

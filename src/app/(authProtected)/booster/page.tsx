@@ -2,17 +2,18 @@
 
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
-import { useBooster, useBoosterStatus, useInventory } from '@/hooks'
+import { useBooster, useBoosterStatus, useInventory, useAllCards } from '@/hooks'
 import { BoosterPack } from '@/components/booster/BoosterPack'
 import { CardReveal } from '@/components/booster/CardReveal'
-import { InventoryGrid } from '@/components/booster/InventoryGrid'
+import { CollectionGrid } from '@/components/booster/CollectionGrid'
 import type { BoosterCardFull } from '@/utils/types'
 
 export default function BoosterPage() {
   const { user, isLoading: isAuthLoading } = useAuth()
   const { openBooster, isOpening, error, boostersRemaining, resetCards, refreshStatus } = useBooster(user?.id)
   const { timeUntilReset, canOpenBooster } = useBoosterStatus(user?.id)
-  const { stats, refresh: refreshInventory, filteredCollection, rarityFilter, setRarityFilter } = useInventory(user?.id)
+  const { stats, refresh: refreshInventory, collection } = useInventory(user?.id)
+  const { filteredCards, refresh: refreshAllCards, rarityFilter, setRarityFilter } = useAllCards()
 
   const [isRevealing, setIsRevealing] = useState(false)
   const [revealedCards, setRevealedCards] = useState<BoosterCardFull[]>([])
@@ -43,7 +44,7 @@ export default function BoosterPage() {
       <div className="flex-1 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-amber-400 border-t-transparent rounded-full animate-spin" />
-          <p className="text-slate-400">Loading...</p>
+          <p className="text-slate-400">Chargement...</p>
         </div>
       </div>
     )
@@ -54,8 +55,8 @@ export default function BoosterPage() {
     return (
       <div className="flex-1 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-white mb-2">Not authenticated</h2>
-          <p className="text-slate-400">Please log in to access booster packs.</p>
+          <h2 className="text-2xl font-bold text-white mb-2">Non authentifié</h2>
+          <p className="text-slate-400">Veuillez vous connecter pour accéder aux boosters.</p>
         </div>
       </div>
     )
@@ -68,6 +69,7 @@ export default function BoosterPage() {
     setCurrentRevealIndex(0)
     resetCards()
     refreshInventory()
+    refreshAllCards()
   }
 
   // Handle card click during reveal
@@ -90,14 +92,7 @@ export default function BoosterPage() {
       </div>
 
       <div className="relative z-10 container mx-auto px-4 py-8">
-        {/* Hero Section */}
         <section className="text-center mb-16 pt-8">
-          <h1 className="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-linear-to-r from-amber-200 via-yellow-300 to-amber-200 mb-4 tracking-tight">
-            Booster Packs
-          </h1>
-          <p className="text-slate-400 text-lg mb-8">Open booster packs to discover new cards for your collection</p>
-
-          {/* Boosters Counter */}
           <div className="inline-flex flex-col items-center gap-4 bg-slate-900/60 backdrop-blur-xl rounded-2xl p-8 border border-slate-700/50 shadow-2xl">
             <div className="flex items-center gap-3">
               {Array.from({ length: 5 }).map((_, i) => (
@@ -117,7 +112,7 @@ export default function BoosterPage() {
               <span className="text-2xl text-slate-400 ml-2">/ 5</span>
             </div>
 
-            <p className="text-slate-500 text-sm">Boosters remaining today</p>
+            <p className="text-slate-500 text-sm">Boosters restants aujourd&apos;hui</p>
 
             {boostersRemaining === 0 && (
               <p className="text-amber-400/80 text-sm flex items-center gap-2">
@@ -129,7 +124,7 @@ export default function BoosterPage() {
                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                Resets in {timeUntilReset}
+                Réinitialisation dans {timeUntilReset}
               </p>
             )}
           </div>
@@ -157,14 +152,14 @@ export default function BoosterPage() {
         <section className="pb-12">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
             <div>
-              <h2 className="text-3xl font-bold text-white mb-2">Your Collection</h2>
+              <h2 className="text-3xl font-bold text-white mb-2">Ta Collection</h2>
               {stats && (
                 <p className="text-slate-400">
-                  <span className="text-amber-400 font-semibold">{stats.unique_cards}</span> unique cards
+                  <span className="text-amber-400 font-semibold">{stats.unique_cards}</span> cartes uniques
                   <span className="mx-2">•</span>
-                  <span className="text-slate-300">{stats.total_cards}</span> total
+                  <span className="text-slate-300">{stats.total_cards}</span> au total
                   <span className="mx-2">•</span>
-                  <span className="text-emerald-400">{stats.completion_percentage}%</span> complete
+                  <span className="text-emerald-400">{stats.completion_percentage}%</span> complété
                 </p>
               )}
             </div>
@@ -176,9 +171,9 @@ export default function BoosterPage() {
                 onChange={(e) => setRarityFilter(e.target.value as typeof rarityFilter)}
                 className="px-4 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all"
               >
-                <option value="all">All Rarities</option>
-                <option value="common">Common</option>
-                <option value="uncommon">Uncommon</option>
+                <option value="all">Toutes les raretés</option>
+                <option value="common">Commune</option>
+                <option value="uncommon">Peu commune</option>
                 <option value="rare">Rare</option>
                 <option value="holo">Holo</option>
                 <option value="ultra">Ultra Rare</option>
@@ -186,7 +181,7 @@ export default function BoosterPage() {
             </div>
           </div>
 
-          <InventoryGrid collection={filteredCollection} />
+          <CollectionGrid allCards={filteredCards} ownedCards={collection} />
         </section>
       </div>
     </div>

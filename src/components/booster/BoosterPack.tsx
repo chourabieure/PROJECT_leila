@@ -117,13 +117,13 @@ export function BoosterPack({ onClick, disabled, isOpening }: BoosterPackProps) 
 
             {/* Top text */}
             <div className="absolute top-4 left-0 right-0 text-center">
-              <span className="text-xs font-bold tracking-[0.3em] text-amber-400/80 uppercase">Booster Pack</span>
+              <span className="text-xs font-bold tracking-[0.3em] text-amber-400/80 uppercase">Booster</span>
             </div>
 
             {/* Bottom text */}
             <div className="absolute bottom-4 left-0 right-0 text-center">
               <span className="text-lg font-black tracking-wider text-transparent bg-clip-text bg-linear-to-r from-amber-400 via-yellow-300 to-amber-400">
-                3 CARDS
+                3 CARTES
               </span>
             </div>
 
@@ -147,7 +147,7 @@ export function BoosterPack({ onClick, disabled, isOpening }: BoosterPackProps) 
           <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-2xl">
             <div className="flex flex-col items-center gap-3">
               <div className="w-12 h-12 border-4 border-amber-400 border-t-transparent rounded-full animate-spin" />
-              <span className="text-amber-400 font-medium">Opening...</span>
+              <span className="text-amber-400 font-medium">Ouverture...</span>
             </div>
           </div>
         )}
@@ -160,7 +160,7 @@ export function BoosterPack({ onClick, disabled, isOpening }: BoosterPackProps) 
         ${disabled ? 'text-slate-600' : 'text-slate-400 group-hover:text-amber-400'}
       `}
       >
-        {disabled ? 'No boosters available' : isOpening ? 'Opening pack...' : 'Click to open'}
+        {disabled ? 'Aucun booster disponible' : isOpening ? 'Ouverture en cours...' : 'Clique pour ouvrir'}
       </p>
     </div>
   )

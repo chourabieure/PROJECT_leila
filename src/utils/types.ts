@@ -188,8 +188,8 @@ export const RARITY_COLORS: Record<Rarity, string> = {
 
 // Rarity display names
 export const RARITY_NAMES: Record<Rarity, string> = {
-  common: 'Common',
-  uncommon: 'Uncommon',
+  common: 'Commune',
+  uncommon: 'Peu commune',
   rare: 'Rare',
   holo: 'Holo Rare',
   ultra: 'Ultra Rare',

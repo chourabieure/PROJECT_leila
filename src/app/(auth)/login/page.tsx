@@ -36,8 +36,8 @@ function LoginForm() {
       <div className="w-full max-w-md">
         <div className="bg-zinc-800/50 backdrop-blur-xl rounded-2xl border border-zinc-700/50 p-8 shadow-2xl">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2">Welcome back</h1>
-            <p className="text-zinc-400">Sign in to your account</p>
+            <h1 className="text-3xl font-bold text-white mb-2">Bon retour</h1>
+            <p className="text-zinc-400">Connecte-toi à ton compte</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -49,7 +49,7 @@ function LoginForm() {
 
             <div className="space-y-2">
               <label htmlFor="username" className="block text-sm font-medium text-zinc-300">
-                Username
+                Nom d'utilisateur
               </label>
               <input
                 id="username"
@@ -57,7 +57,7 @@ function LoginForm() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full px-4 py-3 bg-zinc-900/50 border border-zinc-700 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
-                placeholder="Enter your username"
+                placeholder="Entre ton nom d'utilisateur"
                 required
                 autoComplete="username"
               />
@@ -65,7 +65,7 @@ function LoginForm() {
 
             <div className="space-y-2">
               <label htmlFor="password" className="block text-sm font-medium text-zinc-300">
-                Password
+                Mot de passe
               </label>
               <input
                 id="password"
@@ -73,7 +73,7 @@ function LoginForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 bg-zinc-900/50 border border-zinc-700 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
-                placeholder="Enter your password"
+                placeholder="Entre ton mot de passe"
                 required
                 autoComplete="current-password"
               />
@@ -102,22 +102,22 @@ function LoginForm() {
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     />
                   </svg>
-                  Signing in...
+                  Connexion...
                 </span>
               ) : (
-                "Sign in"
+                "Se connecter"
               )}
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-zinc-400">
-              Don&apos;t have an account?{" "}
+              Pas encore de compte ?{" "}
               <Link
                 href="/register"
                 className="text-violet-400 hover:text-violet-300 font-medium transition-colors"
               >
-                Sign up
+                S'inscrire
               </Link>
             </p>
           </div>

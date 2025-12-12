@@ -20,7 +20,7 @@ export function UserMenu() {
         href="/login"
         className="px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white text-sm font-medium rounded-lg transition-colors"
       >
-        Sign in
+        Se connecter
       </Link>
     );
   }
@@ -54,7 +54,7 @@ export function UserMenu() {
           <div className="absolute right-0 mt-2 w-48 bg-zinc-800 border border-zinc-700 rounded-xl shadow-xl z-50 overflow-hidden">
             <div className="px-4 py-3 border-b border-zinc-700">
               <p className="text-sm text-white font-medium">{user.username}</p>
-              <p className="text-xs text-zinc-400">Logged in</p>
+              <p className="text-xs text-zinc-400">Connecté</p>
             </div>
             <div className="py-1">
               <button
@@ -64,7 +64,7 @@ export function UserMenu() {
                 }}
                 className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-zinc-700/50 transition-colors"
               >
-                Sign out
+                Se déconnecter
               </button>
             </div>
           </div>
