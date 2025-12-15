@@ -95,7 +95,7 @@ export default function BoosterPage() {
         <section className="text-center mb-16 pt-8">
           <div className="inline-flex flex-col items-center gap-4 bg-slate-900/60 backdrop-blur-xl rounded-2xl p-8 border border-slate-700/50 shadow-2xl">
             <div className="flex items-center gap-3">
-              {Array.from({ length: 5 }).map((_, i) => (
+              {Array.from({ length: 3 }).map((_, i) => (
                 <div
                   key={i}
                   className={`w-4 h-4 rounded-full transition-all duration-300 ${
@@ -109,7 +109,7 @@ export default function BoosterPage() {
 
             <div className="text-center">
               <span className="text-6xl font-black text-white">{boostersRemaining}</span>
-              <span className="text-2xl text-slate-400 ml-2">/ 5</span>
+              <span className="text-2xl text-slate-400 ml-2">/ 3</span>
             </div>
 
             <p className="text-slate-500 text-sm">Boosters restants aujourd&apos;hui</p>

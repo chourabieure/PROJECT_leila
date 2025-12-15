@@ -21,7 +21,7 @@ export function useBooster(userId: string | undefined): UseBoosterReturn {
   const [isOpening, setIsOpening] = useState(false)
   const [cards, setCards] = useState<BoosterCardFull[]>([])
   const [error, setError] = useState<string | null>(null)
-  const [boostersRemaining, setBoostersRemaining] = useState(5)
+  const [boostersRemaining, setBoostersRemaining] = useState(3)
 
   // Fetch current booster status
   const refreshStatus = useCallback(async () => {
@@ -43,7 +43,7 @@ export function useBooster(userId: string | undefined): UseBoosterReturn {
         setBoostersRemaining(data.boosters_remaining)
       } else {
         // No record means user hasn't opened any boosters today
-        setBoostersRemaining(5)
+        setBoostersRemaining(3)
       }
     } catch (err) {
       console.error('Error refreshing status:', err)
@@ -73,7 +73,7 @@ export function useBooster(userId: string | undefined): UseBoosterReturn {
       if (boosterError) {
         // Check if it's the daily limit error
         if (boosterError.message.includes('Daily booster limit reached')) {
-          setError('Tu as atteint ta limite quotidienne de 5 boosters !')
+          setError('Tu as atteint ta limite quotidienne de 3 boosters !')
           setBoostersRemaining(0)
         } else {
           setError(boosterError.message)
