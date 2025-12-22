@@ -63,6 +63,9 @@ export interface Card {
   height: string
   weight: string
   image_url: string
+  image_offset_x: number // % offset for image positioning (-50 to 50)
+  image_offset_y: number // % offset for image positioning (-50 to 50)
+  image_scale: number // scale factor (0.5 to 2.0, 1.0 = 100%)
   weakness: EnergyType
   retreat_cost: number
   flavor_text: string

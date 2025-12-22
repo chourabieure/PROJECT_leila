@@ -1,50 +1,50 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useState } from 'react'
+import { useAuth } from '@/context/AuthContext'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function RegisterPage() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const { register } = useAuth();
-  const router = useRouter();
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const { register } = useAuth()
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
+    e.preventDefault()
+    setError('')
 
     if (password !== confirmPassword) {
-      setError("Les mots de passe ne correspondent pas");
-      return;
+      setError('Les mots de passe ne correspondent pas')
+      return
     }
 
     if (password.length < 6) {
-      setError("Le mot de passe doit contenir au moins 6 caractères");
-      return;
+      setError('Le mot de passe doit contenir au moins 6 caractères')
+      return
     }
 
     if (username.length < 3) {
-      setError("Le nom d'utilisateur doit contenir au moins 3 caractères");
-      return;
+      setError("Le nom d'utilisateur doit contenir au moins 3 caractères")
+      return
     }
 
-    setIsLoading(true);
+    setIsLoading(true)
 
-    const result = await register(username, password);
+    const result = await register(username, password)
 
     if (result.success) {
-      router.push("/");
+      router.push('/')
     } else {
-      setError(result.error || "Registration failed");
+      setError(result.error || 'Registration failed')
     }
 
-    setIsLoading(false);
-  };
+    setIsLoading(false)
+  }
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4">
@@ -57,9 +57,7 @@ export default function RegisterPage() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
-              <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-3 text-red-400 text-sm">
-                {error}
-              </div>
+              <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-3 text-red-400 text-sm">{error}</div>
             )}
 
             <div className="space-y-2">
@@ -136,18 +134,15 @@ export default function RegisterPage() {
                   Création du compte...
                 </span>
               ) : (
-                "Créer un compte"
+                'Créer un compte'
               )}
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-zinc-400">
-              Déjà un compte ?{" "}
-              <Link
-                href="/login"
-                className="text-violet-400 hover:text-violet-300 font-medium transition-colors"
-              >
+              Déjà un compte ?{' '}
+              <Link href="/login" className="text-violet-400 hover:text-violet-300 font-medium transition-colors">
                 Se connecter
               </Link>
             </p>
@@ -155,6 +150,5 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }
-

@@ -4,7 +4,10 @@ import Image from 'next/image'
 
 export default function Home() {
   return (
-    <div className="flex flex-1 w-full items-center justify-center">
+    <div className="flex flex-1 w-full flex-col gap-4 items-center justify-center">
+      <h1 className="absolute top-16 left-1/2 -translate-x-1/2 text-3xl font-extrabold text-white text-center">
+        Eheh (c&apos;est pas le vrai code au cas où je me fait hacker)
+      </h1>
       <CometCard className="w-full max-w-96">
         <div
           className="flex cursor-pointer flex-col items-stretch rounded-4xl border-0 bg-[#1F2121] p-2 saturate-0 md:my-20 md:p-4"

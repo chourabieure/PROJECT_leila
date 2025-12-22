@@ -1,7 +1,6 @@
 'use client'
 
 import { RARITY_COLORS, Rarity, EnergyType } from '@/utils/types'
-import Image from 'next/image'
 
 interface Attack {
   name: string
@@ -26,6 +25,9 @@ interface PokemonCardProps {
   height: string
   weight: string
   imageUrl: string
+  imageOffsetX?: number // % offset for image positioning (-50 to 50)
+  imageOffsetY?: number // % offset for image positioning (-50 to 50)
+  imageScale?: number // scale factor (0.5 to 2.0, 1.0 = 100%)
   attacks: Attack[]
   weakness?: TypeModifier
   resistance?: TypeModifier
@@ -339,6 +341,9 @@ export const PokemonCard = ({
   height,
   weight,
   imageUrl,
+  imageOffsetX = 0,
+  imageOffsetY = 0,
+  imageScale = 1,
   attacks,
   weakness,
   resistance,
@@ -464,27 +469,31 @@ export const PokemonCard = ({
                 className="relative overflow-hidden bg-linear-to-b from-sky-100 to-sky-200"
                 style={{ height: '145px' }}
               >
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={imageUrl}
                   alt={name}
-                  fill
-                  className="object-cover"
+                  className="absolute w-full h-full object-cover"
                   style={{
                     filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))',
+                    transform: `translate(${imageOffsetX}%, ${imageOffsetY}%) scale(${imageScale})`,
+                    transformOrigin: 'center center',
                   }}
                 />
               </div>
 
               {/* Data strip */}
               <div
-                className="flex items-center justify-center py-1 text-[8px] tracking-wide"
+                className="flex items-center justify-center py-1 text-[8px] tracking-wide h-[20px]"
                 style={{
                   background: 'linear-gradient(180deg, #D8D8D8 0%, #A8A8A8 100%)',
                   color: '#404040',
                   fontWeight: 500,
                 }}
               >
-                NO. {pokedexNumber} {species} HT: {height} WT: {weight}
+                <span className="leading-none">
+                  NO. {pokedexNumber} {species} HT: {height} WT: {weight}
+                </span>
               </div>
             </div>
           </div>
@@ -492,9 +501,9 @@ export const PokemonCard = ({
           {/* Attack Section */}
           <div className="flex-1 flex flex-col justify-start py-1 px-1">
             {attacks.map((attack, index) => (
-              <div key={index} className="mb-2">
+              <div key={index} className="mb-2 mt-2">
                 {/* Attack Row */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-start gap-2">
                   {/* Energy Cost */}
                   <div className="flex items-center gap-0.5 min-w-[24px]">
                     {attack.energyCost.map((energy, i) => (
@@ -503,7 +512,9 @@ export const PokemonCard = ({
                   </div>
 
                   {/* Attack Name */}
-                  <span className="flex-1 text-base font-black text-black tracking-tight">{attack.name}</span>
+                  <span className="flex-1 text-base font-extrabold text-black tracking-tight -mt-[2px]">
+                    {attack.name}
+                  </span>
 
                   {/* Damage */}
                   {attack.damage !== undefined && <span className="text-xl font-bold text-black">{attack.damage}</span>}
@@ -528,7 +539,7 @@ export const PokemonCard = ({
           >
             {/* Weakness */}
             <div className="flex-1 flex flex-col items-center justify-center border-r border-gray-400/50 px-2">
-              <span className="text-[7px] font-bold text-gray-600 uppercase tracking-wider">weakness</span>
+              <span className="text-[7px] font-bold text-gray-600 uppercase tracking-wider">faiblesse</span>
               <div className="flex items-center gap-0.5">
                 {weakness ? (
                   <>
@@ -558,7 +569,7 @@ export const PokemonCard = ({
 
             {/* Retreat */}
             <div className="flex-1 flex flex-col items-center justify-center px-2">
-              <span className="text-[7px] font-bold text-gray-600 uppercase tracking-wider">retreat</span>
+              <span className="text-[7px] font-bold text-gray-600 uppercase tracking-wider">retraite</span>
               <div className="flex items-center gap-0.5">
                 {retreatCost > 0 ? (
                   Array.from({ length: Math.min(retreatCost, 4) }).map((_, i) => (
@@ -585,7 +596,7 @@ export const PokemonCard = ({
                 </span>
                 <RaritySymbol rarity={rarity} />
               </div>
-              <span className="text-gray-700 text-[6px]">©{year} Pokémon</span>
+              <span className="text-gray-700 text-[6px]">©{year} GlitchMon</span>
             </div>
 
             {/* Right side - Flavor Text */}

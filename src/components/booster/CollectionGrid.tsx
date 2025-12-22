@@ -102,13 +102,16 @@ export function CollectionGrid({ allCards, ownedCards }: CollectionGridProps) {
                   height={card.height || '0\'0"'}
                   weight={card.weight || '0.0 lbs'}
                   imageUrl={card.image_url || '/pokemon-effects/trainerbg.jpg'}
+                  imageOffsetX={card.image_offset_x ?? 0}
+                  imageOffsetY={card.image_offset_y ?? 0}
+                  imageScale={card.image_scale ?? 1}
                   attacks={mapAttacks(card.attacks)}
                   weakness={{ type: weaknessType, modifier: '×2' }}
                   retreatCost={card.retreat_cost || 1}
                   flavorText={card.flavor_text || 'A mysterious Pokémon.'}
                   illustrator={card.illustrator || 'Unknown'}
                   cardNumber={card.pokedex_number || '???'}
-                  setTotal="999"
+                  setTotal="31"
                   rarity={card.rarity}
                   year="2024"
                 />

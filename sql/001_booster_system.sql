@@ -421,7 +421,7 @@ SELECT
   u.id as user_id,
   u.username,
   COALESCE(udb.boosters_opened, 0) as boosters_opened_today,
-  5 - COALESCE(udb.boosters_opened, 0) as boosters_remaining,
+  3 - COALESCE(udb.boosters_opened, 0) as boosters_remaining,
   udb.last_opened_at
 FROM users u
 LEFT JOIN user_daily_boosters udb 

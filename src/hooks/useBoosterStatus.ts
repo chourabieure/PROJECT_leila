@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
-import type { BoosterStatus, MAX_DAILY_BOOSTERS } from '@/utils/types'
+import type { BoosterStatus } from '@/utils/types'
 
 interface UseBoosterStatusReturn {
   // State
@@ -84,11 +84,10 @@ export function useBoosterStatus(userId: string | undefined): UseBoosterStatusRe
     }
   }, [userId])
 
-  // Update time until reset every minute
   useEffect(() => {
     const interval = setInterval(() => {
       setTimeUntilReset(getTimeUntilMidnight())
-    }, 60000) // Update every minute
+    }, 60000)
 
     return () => clearInterval(interval)
   }, [])
