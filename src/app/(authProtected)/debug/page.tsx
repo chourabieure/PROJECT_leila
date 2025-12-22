@@ -2,6 +2,8 @@
 
 import { useState, useCallback } from 'react'
 import { useAllCards } from '@/hooks/useAllCards'
+import { useAuth } from '@/context/AuthContext'
+import { useBoosterStatus } from '@/hooks/useBoosterStatus'
 import { supabase } from '@/lib/supabase'
 import {
   RARITY_NAMES,
@@ -734,6 +736,41 @@ export default function DebugPage() {
     allCards,
     refresh,
   } = useAllCards()
+  
+  const { user } = useAuth()
+  const { boostersOpened, boostersRemaining, refresh: refreshBoosterStatus } = useBoosterStatus(user?.id)
+  const [isResetting, setIsResetting] = useState(false)
+  const [resetStatus, setResetStatus] = useState<'idle' | 'success' | 'error'>('idle')
+
+  const handleResetBoosters = async () => {
+    if (!user?.id) return
+    
+    setIsResetting(true)
+    setResetStatus('idle')
+    
+    try {
+      // Delete today's entry from user_daily_boosters
+      const today = new Date().toISOString().split('T')[0]
+      const { error: deleteError } = await supabase
+        .from('user_daily_boosters')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('date', today)
+      
+      if (deleteError) throw deleteError
+      
+      setResetStatus('success')
+      await refreshBoosterStatus()
+      
+      // Reset status after 3 seconds
+      setTimeout(() => setResetStatus('idle'), 3000)
+    } catch (err) {
+      console.error('Reset error:', err)
+      setResetStatus('error')
+    } finally {
+      setIsResetting(false)
+    }
+  }
 
   const rarityOptions: (Rarity | 'all')[] = ['all', 'common', 'uncommon', 'rare', 'holo', 'ultra']
 
@@ -746,6 +783,41 @@ export default function DebugPage() {
           <p className="text-slate-400">
             Showing {filteredCards.length} of {allCards.length} cards from the database
           </p>
+        </div>
+
+        {/* Debug Actions */}
+        <div className="bg-red-500/10 backdrop-blur rounded-xl p-4 mb-6 border border-red-500/30">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-red-400 text-lg">⚠️</span>
+            <h2 className="text-lg font-semibold text-red-400">Debug Actions</h2>
+          </div>
+          <div className="flex flex-wrap gap-4 items-center">
+            <div className="flex items-center gap-4">
+              <div className="text-sm text-slate-400">
+                Boosters today: <span className="text-white font-medium">{boostersOpened}/3</span> opened, 
+                <span className="text-amber-400 font-medium ml-1">{boostersRemaining}</span> remaining
+              </div>
+              <button
+                onClick={handleResetBoosters}
+                disabled={isResetting || boostersOpened === 0}
+                className="px-4 py-2 bg-red-600 hover:bg-red-500 disabled:bg-slate-700 disabled:text-slate-500 text-white font-medium rounded-lg transition-colors flex items-center gap-2"
+              >
+                {isResetting ? (
+                  <>
+                    <span className="animate-spin">⏳</span> Resetting...
+                  </>
+                ) : (
+                  <>🔄 Reset Daily Boosters</>
+                )}
+              </button>
+              {resetStatus === 'success' && (
+                <span className="text-emerald-400 text-sm">✓ Daily limit reset!</span>
+              )}
+              {resetStatus === 'error' && (
+                <span className="text-red-400 text-sm">✕ Error resetting boosters</span>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Filters */}

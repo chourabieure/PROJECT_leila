@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [new URL('https://raw.githubusercontent.com/**')],
   },
+  transpilePackages: ['three'],
 }
 
 export default nextConfig
