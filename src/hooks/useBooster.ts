@@ -40,7 +40,6 @@ export function useBooster(userId: string | undefined): UseBoosterReturn {
       }
 
       if (data) {
-        console.log(data)
         setBoostersRemaining(data.boosters_remaining)
       } else {
         // No record means user hasn't opened any boosters today

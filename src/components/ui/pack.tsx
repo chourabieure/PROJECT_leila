@@ -12,18 +12,20 @@ interface Props extends ComponentProps<'mesh'> {
 
 export const Pack = ({ geometry, material, isClickable, isSelected, onClick }: Props) => {
   const cardRef = useRef(null)
-  const [{ rotation, scale }, set] = useSpring(() => ({
-    rotation: [0, 0, 0],
-    scale: 1,
-    config: { mass: 1, tension: 300, friction: 80 },
+  const [{ rotation, scale }, api] = useSpring(() => ({
+    from: {
+      rotation: [0, 0, 0],
+      scale: 1,
+      config: { mass: 1, tension: 300, friction: 80 },
+    },
   }))
 
   // Reset scale when deselected
   useEffect(() => {
     if (!isSelected) {
-      set({ scale: 1 })
+      api.start({ to: { scale: 1 } })
     }
-  }, [isSelected, set])
+  }, [isSelected, api])
 
   const bind = useGesture(
     {
@@ -33,18 +35,35 @@ export const Pack = ({ geometry, material, isClickable, isSelected, onClick }: P
         const yAngle = mx / 100
 
         if (down) {
-          set({ rotation: [xAngle, yAngle, 0], immediate: active })
+          api.start({
+            to: {
+              rotation: [xAngle, yAngle, 0],
+              config: { mass: 1, tension: 150, friction: 40 },
+            },
+            immediate: active,
+          })
         } else {
           const yDampingAngle = Math.round(yAngle / Math.PI) * Math.PI
-          set({ rotation: [0, yDampingAngle, 0], immediate: active })
+          api.start({
+            to: {
+              rotation: [0, yDampingAngle, 0],
+              config: { mass: 1, tension: 150, friction: 40 },
+            },
+            immediate: active,
+          })
         }
       },
       onClick: ({ event }) => {
         event.stopPropagation()
-        set({
-          scale: 2.5,
+        api.start({
+          to: {
+            scale: 2.5,
+            config: { mass: 1, tension: 150, friction: 40 },
+          },
         })
-        onClick?.()
+        setTimeout(() => {
+          onClick?.()
+        }, 300)
       },
     },
     {

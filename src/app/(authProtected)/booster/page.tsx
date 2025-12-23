@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { useBooster, useBoosterStatus, useInventory, useAllCards } from '@/hooks'
 import { CardReveal } from '@/components/booster/CardReveal'
@@ -11,6 +11,11 @@ import type { BoosterCardFull } from '@/utils/types'
 type Section = 'packs' | 'inventory'
 
 export default function BoosterPage() {
+  const packListRef = useRef<{ handleClickBack: () => void }>({
+    handleClickBack: () => {
+      return
+    },
+  })
   const { user, isLoading: isAuthLoading } = useAuth()
   const { openBooster, isOpening, error, boostersRemaining, resetCards, refreshStatus } = useBooster(user?.id)
   const { timeUntilReset, canOpenBooster } = useBoosterStatus(user?.id)
@@ -30,8 +35,7 @@ export default function BoosterPage() {
   }, [refreshStatus, user?.id])
 
   // Handle opening booster when a pack is clicked
-  const handlePackOpen = async (packIndex: number) => {
-    console.log('Opening pack:', packIndex)
+  const handlePackOpen = async () => {
     if (!user?.id || !canOpenBooster || isOpening) return
 
     const newCards = await openBooster()
@@ -71,6 +75,7 @@ export default function BoosterPage() {
     setIsRevealing(false)
     setRevealedCards([])
     setCurrentRevealIndex(0)
+    packListRef.current?.handleClickBack?.()
     resetCards()
     refreshInventory()
     refreshAllCards()
@@ -167,7 +172,7 @@ export default function BoosterPage() {
           )}
 
           {/* 3D Pack Scene */}
-          <Scene onPackOpen={handlePackOpen} />
+          <Scene onPackOpen={handlePackOpen} ref={packListRef} />
         </div>
       )}
 
