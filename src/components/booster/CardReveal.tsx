@@ -149,7 +149,7 @@ export function CardReveal({ cards, currentIndex, onCardClick, onComplete }: Car
                       imageOffsetX={card.image_offset_x ?? 0}
                       imageOffsetY={card.image_offset_y ?? 0}
                       imageScale={card.image_scale ?? 1}
-                      attacks={mapAttacks(card.attacks)}
+                      attacks={mapAttacks(card.card_attacks)}
                       weakness={{ type: weaknessType, modifier: '×2' }}
                       retreatCost={card.retreat_cost || 1}
                       flavorText={card.flavor_text || 'A mysterious Pokémon.'}

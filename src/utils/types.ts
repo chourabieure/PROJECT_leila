@@ -72,7 +72,7 @@ export interface Card {
   illustrator: string | null
   rarity: Rarity
   created_at?: string
-  attacks?: Attack[]
+  card_attacks?: Attack[]
 }
 
 // Database User entity

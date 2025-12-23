@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { UserCollectionItem, CollectionStats, Rarity, Attack } from '@/utils/types'
+import { USER_ID } from '@/utils/constants'
 
 // Extended collection item with attacks
 export interface UserCollectionItemWithAttacks extends UserCollectionItem {
@@ -29,7 +30,7 @@ interface UseInventoryReturn {
   refresh: () => Promise<void>
 }
 
-export function useInventory(userId: string | undefined): UseInventoryReturn {
+export function useInventory(): UseInventoryReturn {
   const [collection, setCollection] = useState<UserCollectionItemWithAttacks[]>([])
   const [stats, setStats] = useState<CollectionStats | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -41,8 +42,6 @@ export function useInventory(userId: string | undefined): UseInventoryReturn {
 
   // Fetch user's collection
   const fetchCollection = useCallback(async () => {
-    if (!userId) return
-
     setIsLoading(true)
     setError(null)
 
@@ -51,7 +50,7 @@ export function useInventory(userId: string | undefined): UseInventoryReturn {
       const { data: collectionData, error: collectionError } = await supabase
         .from('user_collection')
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', USER_ID)
         .order('last_obtained_at', { ascending: false })
 
       if (collectionError) {
@@ -65,9 +64,11 @@ export function useInventory(userId: string | undefined): UseInventoryReturn {
 
       if (cardIds.length > 0) {
         const { data: attacksData, error: attacksError } = await supabase
-          .from('attacks')
+          .from('card_attacks')
           .select('*')
           .in('card_id', cardIds)
+
+        console.log(attacksData)
 
         if (attacksError) {
           console.error('Error fetching attacks:', attacksError)
@@ -98,7 +99,7 @@ export function useInventory(userId: string | undefined): UseInventoryReturn {
       const { data: statsData, error: statsError } = await supabase
         .from('user_collection_stats')
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', USER_ID)
         .single()
 
       if (statsError && statsError.code !== 'PGRST116') {
@@ -112,7 +113,7 @@ export function useInventory(userId: string | undefined): UseInventoryReturn {
         const { count: totalCards } = await supabase.from('cards').select('*', { count: 'exact', head: true })
 
         setStats({
-          user_id: userId,
+          user_id: USER_ID,
           unique_cards: 0,
           total_cards: 0,
           total_available: totalCards || 0,
@@ -125,7 +126,7 @@ export function useInventory(userId: string | undefined): UseInventoryReturn {
     } finally {
       setIsLoading(false)
     }
-  }, [userId])
+  }, [])
 
   // Filter collection based on current filters
   const filteredCollection = collection.filter((item) => {

@@ -1,19 +1,9 @@
 'use client'
 
-import { IconChristmasTree, IconGift, IconHome, IconLogout } from '@tabler/icons-react'
-import { useRouter } from 'next/navigation'
-import { useAuth } from '@/context/AuthContext'
+import { IconChristmasTree, IconGift, IconHome } from '@tabler/icons-react'
 import { FloatingDock, DockItem } from './ui/floating-dock'
 
 export const Dock = () => {
-  const { logout } = useAuth()
-  const router = useRouter()
-
-  const handleLogout = async () => {
-    await logout()
-    router.push('/login')
-  }
-
   const links: DockItem[] = [
     {
       title: 'Home',
@@ -29,11 +19,6 @@ export const Dock = () => {
       title: 'Noël',
       icon: <IconChristmasTree className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
       href: '/noel',
-    },
-    {
-      title: 'Déconnexion',
-      icon: <IconLogout className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
-      onClick: handleLogout,
     },
   ]
 

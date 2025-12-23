@@ -2,7 +2,6 @@
 
 import { useState, useCallback } from 'react'
 import { useAllCards } from '@/hooks/useAllCards'
-import { useAuth } from '@/context/AuthContext'
 import { useBoosterStatus } from '@/hooks/useBoosterStatus'
 import { supabase } from '@/lib/supabase'
 import {
@@ -16,6 +15,7 @@ import {
 } from '@/utils/types'
 import { PokemonCard } from '@/components/ui/pokemon-card'
 import { PokemonCardWrapper, type CardRarity } from '@/components/ui/pokemon-card-wrapper'
+import { USER_ID } from '@/utils/constants'
 
 const ENERGY_TYPES: EnergyType[] = [
   'water',
@@ -105,8 +105,13 @@ const selectClass =
 
 // Editable Card Component
 function EditableCard({ card, onUpdate }: { card: Card; onUpdate: () => void }) {
-  const [editedCard, setEditedCard] = useState<Card>({ ...card, attacks: card.attacks ? [...card.attacks] : [] })
-  const [editedAttacks, setEditedAttacks] = useState<Attack[]>(card.attacks ? card.attacks.map((a) => ({ ...a })) : [])
+  const [editedCard, setEditedCard] = useState<Card>({
+    ...card,
+    card_attacks: card.card_attacks ? [...card.card_attacks] : [],
+  })
+  const [editedAttacks, setEditedAttacks] = useState<Attack[]>(
+    card.card_attacks ? card.card_attacks.map((a) => ({ ...a })) : [],
+  )
   const [isSaving, setIsSaving] = useState(false)
   const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -136,7 +141,7 @@ function EditableCard({ card, onUpdate }: { card: Card; onUpdate: () => void }) 
     if (cardChanged) return true
 
     // Check attacks
-    const originalAttacks = card.attacks || []
+    const originalAttacks = card.card_attacks || []
     if (editedAttacks.length !== originalAttacks.length) return true
 
     for (let i = 0; i < editedAttacks.length; i++) {
@@ -284,8 +289,8 @@ function EditableCard({ card, onUpdate }: { card: Card; onUpdate: () => void }) 
   }
 
   const handleReset = () => {
-    setEditedCard({ ...card, attacks: card.attacks ? [...card.attacks] : [] })
-    setEditedAttacks(card.attacks ? card.attacks.map((a) => ({ ...a })) : [])
+    setEditedCard({ ...card, card_attacks: card.card_attacks ? [...card.card_attacks] : [] })
+    setEditedAttacks(card.card_attacks ? card.card_attacks.map((a) => ({ ...a })) : [])
     setSaveStatus('idle')
   }
 
@@ -736,32 +741,29 @@ export default function DebugPage() {
     allCards,
     refresh,
   } = useAllCards()
-  
-  const { user } = useAuth()
-  const { boostersOpened, boostersRemaining, refresh: refreshBoosterStatus } = useBoosterStatus(user?.id)
+
+  const { boostersOpened, boostersRemaining, refresh: refreshBoosterStatus } = useBoosterStatus()
   const [isResetting, setIsResetting] = useState(false)
   const [resetStatus, setResetStatus] = useState<'idle' | 'success' | 'error'>('idle')
 
   const handleResetBoosters = async () => {
-    if (!user?.id) return
-    
     setIsResetting(true)
     setResetStatus('idle')
-    
+
     try {
       // Delete today's entry from user_daily_boosters
       const today = new Date().toISOString().split('T')[0]
       const { error: deleteError } = await supabase
         .from('user_daily_boosters')
         .delete()
-        .eq('user_id', user.id)
+        .eq('user_id', USER_ID)
         .eq('date', today)
-      
+
       if (deleteError) throw deleteError
-      
+
       setResetStatus('success')
       await refreshBoosterStatus()
-      
+
       // Reset status after 3 seconds
       setTimeout(() => setResetStatus('idle'), 3000)
     } catch (err) {
@@ -794,7 +796,7 @@ export default function DebugPage() {
           <div className="flex flex-wrap gap-4 items-center">
             <div className="flex items-center gap-4">
               <div className="text-sm text-slate-400">
-                Boosters today: <span className="text-white font-medium">{boostersOpened}/3</span> opened, 
+                Boosters today: <span className="text-white font-medium">{boostersOpened}/3</span> opened,
                 <span className="text-amber-400 font-medium ml-1">{boostersRemaining}</span> remaining
               </div>
               <button
@@ -810,12 +812,8 @@ export default function DebugPage() {
                   <>🔄 Reset Daily Boosters</>
                 )}
               </button>
-              {resetStatus === 'success' && (
-                <span className="text-emerald-400 text-sm">✓ Daily limit reset!</span>
-              )}
-              {resetStatus === 'error' && (
-                <span className="text-red-400 text-sm">✕ Error resetting boosters</span>
-              )}
+              {resetStatus === 'success' && <span className="text-emerald-400 text-sm">✓ Daily limit reset!</span>}
+              {resetStatus === 'error' && <span className="text-red-400 text-sm">✕ Error resetting boosters</span>}
             </div>
           </div>
         </div>

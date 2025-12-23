@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { BoosterStatus } from '@/utils/types'
+import { USER_ID } from '@/utils/constants'
 
 interface UseBoosterStatusReturn {
   // State
@@ -39,7 +40,7 @@ function getTimeUntilMidnight(): string {
   return `${minutes}m`
 }
 
-export function useBoosterStatus(userId: string | undefined): UseBoosterStatusReturn {
+export function useBoosterStatus(): UseBoosterStatusReturn {
   const [status, setStatus] = useState<BoosterStatus | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -47,8 +48,6 @@ export function useBoosterStatus(userId: string | undefined): UseBoosterStatusRe
 
   // Fetch booster status
   const fetchStatus = useCallback(async () => {
-    if (!userId) return
-
     setIsLoading(true)
     setError(null)
 
@@ -56,7 +55,7 @@ export function useBoosterStatus(userId: string | undefined): UseBoosterStatusRe
       const { data, error: fetchError } = await supabase
         .from('user_booster_status')
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', USER_ID)
         .single()
 
       if (fetchError && fetchError.code !== 'PGRST116') {
@@ -69,7 +68,7 @@ export function useBoosterStatus(userId: string | undefined): UseBoosterStatusRe
       } else {
         // Default status for new users or new day
         setStatus({
-          user_id: userId,
+          user_id: USER_ID,
           username: '',
           boosters_opened_today: 0,
           boosters_remaining: 5,
@@ -82,7 +81,7 @@ export function useBoosterStatus(userId: string | undefined): UseBoosterStatusRe
     } finally {
       setIsLoading(false)
     }
-  }, [userId])
+  }, [])
 
   useEffect(() => {
     const interval = setInterval(() => {

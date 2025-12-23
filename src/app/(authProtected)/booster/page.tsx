@@ -1,7 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
-import { useAuth } from '@/context/AuthContext'
+import { useRef, useState } from 'react'
 import { useBooster, useBoosterStatus, useInventory, useAllCards } from '@/hooks'
 import { CardReveal } from '@/components/booster/CardReveal'
 import { CollectionGrid } from '@/components/booster/CollectionGrid'
@@ -16,10 +15,9 @@ export default function BoosterPage() {
       return
     },
   })
-  const { user, isLoading: isAuthLoading } = useAuth()
-  const { openBooster, isOpening, error, boostersRemaining, resetCards, refreshStatus } = useBooster(user?.id)
-  const { timeUntilReset, canOpenBooster } = useBoosterStatus(user?.id)
-  const { stats, refresh: refreshInventory, collection } = useInventory(user?.id)
+  const { openBooster, isOpening, error, boostersRemaining, resetCards } = useBooster()
+  const { timeUntilReset, canOpenBooster } = useBoosterStatus()
+  const { stats, refresh: refreshInventory, collection } = useInventory()
   const { filteredCards, refresh: refreshAllCards, rarityFilter, setRarityFilter } = useAllCards()
 
   const [activeSection, setActiveSection] = useState<Section>('packs')
@@ -27,16 +25,9 @@ export default function BoosterPage() {
   const [revealedCards, setRevealedCards] = useState<BoosterCardFull[]>([])
   const [currentRevealIndex, setCurrentRevealIndex] = useState(0)
 
-  // Refresh status on mount and when user changes
-  useEffect(() => {
-    if (user?.id) {
-      refreshStatus()
-    }
-  }, [refreshStatus, user?.id])
-
   // Handle opening booster when a pack is clicked
   const handlePackOpen = async () => {
-    if (!user?.id || !canOpenBooster || isOpening) return
+    if (!canOpenBooster || isOpening) return
 
     const newCards = await openBooster()
     if (newCards && newCards.length > 0) {
@@ -44,30 +35,6 @@ export default function BoosterPage() {
       setCurrentRevealIndex(0)
       setIsRevealing(true)
     }
-  }
-
-  // Show loading while auth is being checked
-  if (isAuthLoading) {
-    return (
-      <div className="flex-1 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-amber-400 border-t-transparent rounded-full animate-spin" />
-          <p className="text-slate-400">Chargement...</p>
-        </div>
-      </div>
-    )
-  }
-
-  // Show message if not authenticated
-  if (!user) {
-    return (
-      <div className="flex-1 flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-white mb-2">Non authentifié</h2>
-          <p className="text-slate-400">Veuillez vous connecter pour accéder aux boosters.</p>
-        </div>
-      </div>
-    )
   }
 
   // Handle reveal completion

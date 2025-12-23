@@ -40,7 +40,7 @@ export function useAllCards(): UseAllCardsReturn {
     try {
       const { data, error: fetchError } = await supabase
         .from('cards')
-        .select('*, attacks:attacks(*)')
+        .select('*, card_attacks:card_attacks(*)')
         .order('pokedex_number', { ascending: true })
 
       if (fetchError) {

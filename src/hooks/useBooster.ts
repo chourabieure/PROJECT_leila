@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { BoosterCardFull, Card } from '@/utils/types'
+import { USER_ID } from '@/utils/constants'
 
 interface UseBoosterReturn {
   // State
@@ -17,7 +18,7 @@ interface UseBoosterReturn {
   refreshStatus: () => Promise<void>
 }
 
-export function useBooster(userId: string | undefined): UseBoosterReturn {
+export function useBooster(): UseBoosterReturn {
   const [isOpening, setIsOpening] = useState(false)
   const [cards, setCards] = useState<BoosterCardFull[]>([])
   const [error, setError] = useState<string | null>(null)
@@ -25,13 +26,11 @@ export function useBooster(userId: string | undefined): UseBoosterReturn {
 
   // Fetch current booster status
   const refreshStatus = useCallback(async () => {
-    if (!userId) return
-
     try {
       const { data, error: fetchError } = await supabase
         .from('user_booster_status')
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', USER_ID)
         .single()
 
       if (fetchError && fetchError.code !== 'PGRST116') {
@@ -48,15 +47,10 @@ export function useBooster(userId: string | undefined): UseBoosterReturn {
     } catch (err) {
       console.error('Error refreshing status:', err)
     }
-  }, [userId])
+  }, [])
 
   // Open a booster pack
   const openBooster = useCallback(async (): Promise<BoosterCardFull[] | null> => {
-    if (!userId) {
-      setError('Utilisateur non authentifié')
-      return null
-    }
-
     if (boostersRemaining <= 0) {
       setError("Plus de boosters disponibles aujourd'hui")
       return null
@@ -68,7 +62,7 @@ export function useBooster(userId: string | undefined): UseBoosterReturn {
 
     try {
       // Call the database function to open a booster
-      const { data: boosterCards, error: boosterError } = await supabase.rpc('open_booster', { p_user_id: userId })
+      const { data: boosterCards, error: boosterError } = await supabase.rpc('open_booster', { p_user_id: USER_ID })
 
       if (boosterError) {
         // Check if it's the daily limit error
@@ -91,7 +85,7 @@ export function useBooster(userId: string | undefined): UseBoosterReturn {
       const cardIds = boosterCards.map((c: { out_card_id: number }) => c.out_card_id)
       const { data: fullCards, error: cardsError } = await supabase
         .from('cards')
-        .select('*, attacks:attacks(*)')
+        .select('*, card_attacks:card_attacks(*)')
         .in('id', cardIds)
 
       if (cardsError) {
@@ -119,7 +113,7 @@ export function useBooster(userId: string | undefined): UseBoosterReturn {
     } finally {
       setIsOpening(false)
     }
-  }, [userId, boostersRemaining])
+  }, [boostersRemaining])
 
   // Reset cards (clear the revealed cards)
   const resetCards = useCallback(() => {

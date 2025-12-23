@@ -79,7 +79,7 @@ export function CollectionGrid({ allCards, ownedCards }: CollectionGridProps) {
         const isOwned = ownedCardIds.has(card.id)
         const ownedItem = ownedCardMap.get(card.id)
         const weaknessType = weaknessMapping[card.type]
-
+        console.log(card)
         if (isOwned) {
           // Show face-up card
           return (
@@ -105,7 +105,7 @@ export function CollectionGrid({ allCards, ownedCards }: CollectionGridProps) {
                   imageOffsetX={card.image_offset_x ?? 0}
                   imageOffsetY={card.image_offset_y ?? 0}
                   imageScale={card.image_scale ?? 1}
-                  attacks={mapAttacks(card.attacks)}
+                  attacks={mapAttacks(card.card_attacks)}
                   weakness={{ type: weaknessType, modifier: '×2' }}
                   retreatCost={card.retreat_cost || 1}
                   flavorText={card.flavor_text || 'A mysterious Pokémon.'}
